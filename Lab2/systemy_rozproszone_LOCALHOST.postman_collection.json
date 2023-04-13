@@ -1,23 +1,146 @@
 {
 	"info": {
-		"_postman_id": "7080f099-df43-4062-848c-69c2316ae49c",
-		"name": "systemy_rozproszone",
+		"_postman_id": "cd277059-a503-4236-9ebd-d45b50a5717c",
+		"name": "systemy_rozproszone_LOCALHOST",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "22564350"
 	},
 	"item": [
 		{
-			"name": "FormGet",
+			"name": "LoginFormGet",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
+					"raw": "localhost:8080/login",
 					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginFormSubmitValid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "username",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginFormSubmitInvalid",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "invalidusername",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginFormSubmitInvalidBodyType Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/login?username=username&password=password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "username"
+						},
+						{
+							"key": "password",
+							"value": "password"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginFormSubmitEmptyField",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "invalidusername",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
 					]
 				}
 			},
@@ -59,59 +182,13 @@
 					]
 				},
 				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
+					"raw": "localhost:8080/form",
 					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "SubmitFormInvalidCredentials",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "username",
-							"value": "somethingelsethanshouldbe",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "password",
-							"type": "text"
-						},
-						{
-							"key": "latitude",
-							"value": "50.049683",
-							"type": "text"
-						},
-						{
-							"key": "longitude",
-							"value": "19.944544",
-							"type": "text"
-						},
-						{
-							"key": "days",
-							"value": "3",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
-					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"form"
 					]
 				}
 			},
@@ -153,12 +230,13 @@
 					]
 				},
 				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
+					"raw": "localhost:8080/form",
 					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"form"
 					]
 				}
 			},
@@ -200,12 +278,13 @@
 					]
 				},
 				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
+					"raw": "localhost:8080/form",
 					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"form"
 					]
 				}
 			},
@@ -247,12 +326,13 @@
 					]
 				},
 				"url": {
-					"raw": "https://srgorestapi.onrender.com",
-					"protocol": "https",
+					"raw": "localhost:8080/form",
 					"host": [
-						"srgorestapi",
-						"onrender",
-						"com"
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"form"
 					]
 				}
 			},

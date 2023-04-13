@@ -10,6 +10,11 @@ Server is listening at: _localhost:8080_
 
 Server is listening at: https://srgorestapi.onrender.com
 
+**Endpoints**
+
+- /login
+- /form
+
 **Credentials**
 
 - Username: _username_
