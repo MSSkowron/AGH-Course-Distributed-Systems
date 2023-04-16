@@ -25,3 +25,9 @@ run-actors2:
 
 run-actors3:
 	$(PYTHON) $(ACTORS3)
+
+docker-build:
+	docker build -t ray-lab-image .
+
+docker-run-task:
+	docker run --network lab3_ray_net ray-lab-image python ray-lab-1-task.py

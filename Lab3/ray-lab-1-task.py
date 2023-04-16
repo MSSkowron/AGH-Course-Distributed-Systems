@@ -9,8 +9,8 @@ if ray.is_initialized:
     ray.shutdown()
 ray.init(address='auto', ignore_reinit_error=True, logging_level=logging.ERROR)
 
-arr = [7, 3, 5, 1, 9, 2, 8, 4, 6, 0]
-
+ARRAY_SIZE = 1000
+NUM_OF_ARRAYS = 100
 
 @ray.remote
 def remote_bubble_sort(array):
@@ -33,21 +33,13 @@ def local_bubble_sort(array):
 
 # Local function
 def run_local():
-    start_time = time.time()
-    results = [local_bubble_sort(arr) for _ in range(os.cpu_count())]
-    print(f"LOCAL --- {time.time() - start_time:.2f} seconds ---")
-    print(results)
-
+    results = [local_bubble_sort([i for i in range(ARRAY_SIZE, 0, -1)]) for _ in range(NUM_OF_ARRAYS)]
     return results
 
 
 # Distributed on a Ray cluster
 def run_remote():
-    start_time = time.time()
-    results = ray.get([remote_bubble_sort.remote(arr) for _ in range(os.cpu_count())])
-    print(f"REMOTE --- {time.time() - start_time:.2f} seconds ---")
-    print(results)
-
+    results = ray.get([remote_bubble_sort.remote([i for i in range(ARRAY_SIZE, 0, -1)]) for _ in range(NUM_OF_ARRAYS)])
     return results
 
 
