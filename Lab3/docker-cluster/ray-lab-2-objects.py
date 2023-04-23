@@ -1,4 +1,3 @@
-import logging
 import ray
 
 # Excercises 2.1) Create large lists and python dictionaries,

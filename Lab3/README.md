@@ -43,6 +43,7 @@
 # Dockerized cluster
 
 1. **Dependencies**
+
    Before running the code, you need to ensure that you have the necessary dependencies installed. These include:
 
    - Python
