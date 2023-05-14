@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package tutorial;
+
+option java_package = "sr.proto";
+option java_outer_classname = "BookstoreServiceProtos";
+
+message AddBookOptionalRequest {
+  string title = 1;
+  string author = 2;
+  optional int32 year = 3;
+}
+
+message AddBookNoOptionalRequest {
+  string title = 1;
+  string author = 2;
+  int32 year = 3;
+}
+
+message AddBookResponse {
+  bool response = 1;
+}
+
+service BookstoreService  {
+  rpc AddBookOptional(AddBookOptionalRequest) returns (AddBookResponse);
+  rpc AddBookNoOptional(AddBookNoOptionalRequest) returns (AddBookResponse);
+}

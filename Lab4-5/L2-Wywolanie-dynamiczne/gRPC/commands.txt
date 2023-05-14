@@ -1,0 +1,3 @@
+! COMMAND PROMPT !
+evans --proto calculator.proto
+call Add

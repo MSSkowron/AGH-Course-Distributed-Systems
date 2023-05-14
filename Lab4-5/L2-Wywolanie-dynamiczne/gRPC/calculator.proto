@@ -1,0 +1,65 @@
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "sr.grpc.gen";
+option java_outer_classname = "CalculatorProto";
+
+package calculator;
+
+message A {
+  int64 a = 1;
+  int64 b = 2;
+  float c = 3;
+  string d = 4;
+}
+
+enum Operation {
+  MIN = 0;
+  MAX = 1;
+  AVG = 2;
+}
+
+message Numbers {
+  repeated int64 numbers = 1;
+}
+
+message AddRequest {
+  int64 a = 1;
+  int64 b = 2;
+}
+
+message AddResponse {
+  int64 result = 1;
+}
+
+message SubtractRequest {
+  int64 a = 1;
+  int64 b = 2;
+}
+
+message SubtractResponse {
+  int64 result = 1;
+}
+
+message OpRequest {
+  A a1 = 1;
+  int64 b1 = 2;
+}
+
+message OpResponse {}
+
+message AvgRequest {
+  Numbers n = 1;
+}
+
+message AvgResponse {
+  float result = 1;
+}
+
+service Calculator {
+  rpc Add (AddRequest) returns (AddResponse) {}
+  rpc Subtract (SubtractRequest) returns (SubtractResponse) {}
+  rpc Op (OpRequest) returns (OpResponse) {}
+  rpc Avg (AvgRequest) returns (AvgResponse) {}
+}

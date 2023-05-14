@@ -13,3 +13,7 @@ This repository contains the solutions to the homework assignments for the cours
 - [**Lab3: Actor Model**](./Lab3/)
 
   The Lab3 directory contains the solution to the actor model homework assignment using the Ray framework.
+
+- [**Lab4-5: Middleware**](./Lab4-5)
+
+  The Lab4-5 directory contains the solution to the middleware homework assignment using the Apache Thrift, Ice and gRPC.
