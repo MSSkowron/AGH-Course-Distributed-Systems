@@ -1,6 +1,6 @@
 # DistributedSystems
 
-This repository contains the solutions to the homework assignments for the course "Distributed Systems". The homework assignments cover topics such as sockets, REST, and actor model.
+This repository contains the solutions to the homework assignments for the course "Distributed Systems". The homework assignments cover topics such as sockets, REST, actor model and middleware.
 
 - [**Lab1: Socket Programming**](./Lab1/)
 
