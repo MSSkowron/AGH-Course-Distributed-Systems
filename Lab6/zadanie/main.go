@@ -49,10 +49,10 @@ func startAgency(address string, agencyName string, jobs []string, numberOfJobs 
 	}
 	defer ch.Close()
 
-	// Deklaracja wymiany typu topic dla zleceń i potwierdzeń
+	// Deklaracja wymiany typu direct dla zleceń i potwierdzeń
 	if err := ch.ExchangeDeclare(
-		"amq.topic",
-		amqp.ExchangeTopic,
+		"amq.direct",
+		amqp.ExchangeDirect,
 		true,
 		false,
 		false,
@@ -76,8 +76,8 @@ func startAgency(address string, agencyName string, jobs []string, numberOfJobs 
 
 	if err := ch.QueueBind(
 		agencyQueue.Name,
-		"agency."+agencyName,
-		"amq.topic",
+		agencyName,
+		"amq.direct",
 		false,
 		nil,
 	); err != nil {
@@ -99,8 +99,8 @@ func startAgency(address string, agencyName string, jobs []string, numberOfJobs 
 
 		if err := ch.QueueBind(
 			q.Name,
-			"job."+jobType,
-			"amq.topic",
+			jobType,
+			"amq.direct",
 			false,
 			nil,
 		); err != nil {
@@ -129,6 +129,19 @@ func startCarrier(address string, carrierName string, jobs []string) {
 	}
 	defer ch.Close()
 
+	// Deklaracja wymiany typu direct dla zleceń i potwierdzeń
+	if err := ch.ExchangeDeclare(
+		"amq.direct",
+		amqp.ExchangeDirect,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	); err != nil {
+		log.Fatalf("%s: %s", "Failed to declare an exchange", err)
+	}
+
 	jobQueues := []string{}
 	for _, jobType := range jobs {
 		q, err := ch.QueueDeclare(
@@ -147,8 +160,8 @@ func startCarrier(address string, carrierName string, jobs []string) {
 
 		if err := ch.QueueBind(
 			q.Name,
-			"job."+jobType,
-			"amq.topic",
+			jobType,
+			"amq.direct",
 			false,
 			nil,
 		); err != nil {

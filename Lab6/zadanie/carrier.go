@@ -82,7 +82,7 @@ func (c *Carrier) handleJob(job Job) {
 
 	// Potwierdzenie wykonania zlecenia
 	confirmation := fmt.Sprintf("%s:%d:%s::%s", job.Agency, job.JobNumber, job.JobType, c.name)
-	c.publishConfirmation("agency."+job.Agency, confirmation)
+	c.publishConfirmation(job.Agency, confirmation)
 
 	log.Printf("Przewoźnik %s wysłał potwierdzenie: %s\n", c.name, confirmation)
 }
@@ -96,7 +96,7 @@ func (c *Carrier) publishConfirmation(routingKey, message string) {
 	defer ch.Close()
 
 	if err := ch.Publish(
-		"amq.topic",
+		"amq.direct",
 		routingKey,
 		false,
 		false,

@@ -80,8 +80,8 @@ func (a *Agency) publishJobs(numberOfJobs int) {
 		a.nextJobNumber++
 
 		if err := ch.Publish(
-			"amq.topic",
-			"job."+jobType,
+			"amq.direct",
+			jobType,
 			false,
 			false,
 			amqp.Publishing{
