@@ -47,4 +47,4 @@
   ```
 
   It works as shown below:
-  ![alt text](./example-schema.png)
+  ![alt text](./rabbitMQFlow.png)
