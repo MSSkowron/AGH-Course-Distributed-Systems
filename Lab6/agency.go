@@ -14,37 +14,35 @@ type Agency struct {
 	nextJobNumber int
 	jobs          []string
 	queueName     string
+	exchange      string
 	connection    *amqp.Connection
 }
 
-func NewAgency(name string, jobs []string, queueName string, connection *amqp.Connection) *Agency {
+func NewAgency(name string, jobs []string, queueName string, exchange string, connection *amqp.Connection) *Agency {
 	return &Agency{
 		name:          name,
 		nextJobNumber: 1,
 		jobs:          jobs,
 		queueName:     queueName,
+		exchange:      exchange,
 		connection:    connection,
 	}
 }
 
 func (a *Agency) Run(numberOfJobs int) {
-	log.Println("Agencja " + a.name + " wystartowała!")
+	log.Println("Agency", a.name, "has started!")
 
-	// Nasłuchiwanie na potwierdzenia zleceń
+	// Listen for job confirmations
 	go a.listenForConfirmations()
 
-	// Publikowanie zleceń przez agencję
+	// Publish jobs
 	go a.publishJobs(numberOfJobs)
 }
 
-func (a *Agency) Close() {
-	a.connection.Close()
-}
-
 func (a *Agency) listenForConfirmations() {
-	ch, err := a.connection.Channel()
+	ch, err := a.getChannel()
 	if err != nil {
-		log.Fatalf("%s: %s", "failed to open a channel", err)
+		log.Fatalf("failed to open a channel: %s\n", err)
 	}
 	defer ch.Close()
 
@@ -58,42 +56,72 @@ func (a *Agency) listenForConfirmations() {
 		nil,
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to register a consumer", err)
+		log.Fatalf("failed to register a consumer: %s\n", err)
 	}
 
 	for msg := range msgs {
-		log.Printf("Agencja %s otrzymała potwierdzenie: %s\n", a.name, msg.Body)
+		log.Printf("Agency %s received confirmation: %s\n", a.name, msg.Body)
 	}
 }
 
 func (a *Agency) publishJobs(numberOfJobs int) {
-	ch, err := a.connection.Channel()
+	ch, err := a.getChannel()
 	if err != nil {
-		log.Fatalf("%s: %s", "failed to open a channel", err)
+		log.Fatalf("failed to open a channel: %s\n", err)
 	}
 	defer ch.Close()
 
 	for i := 0; i < numberOfJobs; i++ {
-		jobType := a.jobs[rand.Intn(len(a.jobs))]
+		jobType := a.getRandomJobType()
 
 		message := fmt.Sprintf("%s:%d:%s", a.name, a.nextJobNumber, jobType)
 		a.nextJobNumber++
 
-		if err := ch.Publish(
-			"amq.direct",
-			jobType,
-			false,
-			false,
-			amqp.Publishing{
-				ContentType: "text/plain",
-				Body:        []byte(message),
-			},
-		); err != nil {
-			log.Fatalf("%s: %s", "Failed to publish a job", err)
+		if err := a.publishJob(ch, jobType, message); err != nil {
+			log.Fatalf("failed to publish a job: %s\n", err)
 		}
 
-		log.Printf("Agencja %s wysłała zlecenie: %s\n", a.name, message)
+		log.Printf("Agency %s sent a job: %s\n", a.name, message)
 
-		time.Sleep(time.Second * 2) // Symulacja czasu między zleceniami
+		time.Sleep(time.Second * 2) // Simulate time between jobs
 	}
+}
+
+func (a *Agency) getChannel() (*amqp.Channel, error) {
+	if a.connection == nil {
+		return nil, fmt.Errorf("connection is nil")
+	}
+
+	ch, err := a.connection.Channel()
+	if err != nil {
+		return nil, fmt.Errorf("failed to open a channel: %s", err)
+	}
+
+	return ch, nil
+}
+
+func (a *Agency) getRandomJobType() string {
+	if len(a.jobs) == 0 {
+		return ""
+	}
+
+	randomIndex := rand.Intn(len(a.jobs))
+	return a.jobs[randomIndex]
+}
+
+func (a *Agency) publishJob(ch *amqp.Channel, jobType, message string) error {
+	if ch == nil {
+		return fmt.Errorf("channel is nil")
+	}
+
+	return ch.Publish(
+		a.exchange,
+		jobType,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		},
+	)
 }

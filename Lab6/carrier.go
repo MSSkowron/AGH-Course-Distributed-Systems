@@ -15,20 +15,29 @@ type Carrier struct {
 	name       string
 	jobs       []string
 	jobQueues  []string
+	exchange   string
 	connection *amqp.Connection
 }
 
-func NewCarrier(name string, jobs []string, channel *amqp.Channel, jobQueues []string, connection *amqp.Connection) *Carrier {
+type Job struct {
+	Agency     string
+	JobType    string
+	JobNumber  int
+	AssignedTo string
+}
+
+func NewCarrier(name string, jobs []string, jobQueues []string, exchange string, connection *amqp.Connection) *Carrier {
 	return &Carrier{
 		name:       name,
 		jobs:       jobs,
 		jobQueues:  jobQueues,
+		exchange:   exchange,
 		connection: connection,
 	}
 }
 
 func (c *Carrier) Run() {
-	log.Printf("Przewoźnik %s wystartował!", c.name)
+	log.Println("Carrier", c.name, "has started!")
 
 	for _, queue := range c.jobQueues {
 		go c.listenForJobs(queue)
@@ -36,13 +45,15 @@ func (c *Carrier) Run() {
 }
 
 func (c *Carrier) Close() {
-	c.connection.Close()
+	if c.connection != nil {
+		c.connection.Close()
+	}
 }
 
 func (c *Carrier) listenForJobs(queueName string) {
-	ch, err := c.connection.Channel()
+	ch, err := c.getChannel()
 	if err != nil {
-		log.Fatalf("%s: %s", "failed to open a channel", err)
+		log.Fatalf("failed to open a channel: %s\n", err)
 	}
 	defer ch.Close()
 
@@ -56,10 +67,10 @@ func (c *Carrier) listenForJobs(queueName string) {
 		nil,
 	)
 	if err != nil {
-		log.Fatalf("%s: %s", "Failed to register a consumer", err)
+		log.Fatalf("failed to register a consumer: %s\n", err)
 	}
 
-	log.Printf("Przewoźnik %s nasłuchuje na %s", c.name, queueName)
+	log.Printf("Carrier %s listening to %s\n", c.name, queueName)
 
 	for msg := range msgs {
 		split := strings.Split(string(msg.Body), ":")
@@ -76,31 +87,33 @@ func (c *Carrier) listenForJobs(queueName string) {
 	}
 }
 
-// Funkcja do obsługi zlecenia przez przewoźnika
 func (c *Carrier) handleJob(job Job) {
-	log.Printf("Przewoźnik %s otrzymał zlecenie: %s-%d:%s\n", job.AssignedTo, job.Agency, job.JobNumber, job.JobType)
+	log.Printf("Carrier %s received job: %s-%d:%s\n", job.AssignedTo, job.Agency, job.JobNumber, job.JobType)
 
-	// Symulacja czasu wykonania usługi
-	rand.Seed(time.Now().UnixNano())
-	time.Sleep(time.Second * time.Duration(rand.Intn(5)))
+	c.simulateServiceTime()
 
-	// Potwierdzenie wykonania zlecenia
 	confirmation := fmt.Sprintf("%s:%d:%s::%s", job.Agency, job.JobNumber, job.JobType, c.name)
-	c.publishConfirmation(job.Agency, confirmation)
+	if err := c.publishConfirmation(job.Agency, confirmation); err != nil {
+		log.Fatalf("failed to publish a confirmation: %s\n", err)
+	}
 
-	log.Printf("Przewoźnik %s wysłał potwierdzenie: %s\n", c.name, confirmation)
+	log.Printf("Carrier %s send confirmation: %s\n", c.name, confirmation)
 }
 
-// Funkcja do publikowania zlecenia przez przewoznika
-func (c *Carrier) publishConfirmation(routingKey, message string) {
-	ch, err := c.connection.Channel()
+func (c *Carrier) simulateServiceTime() {
+	rand.Seed(time.Now().UnixNano())
+	time.Sleep(time.Second * time.Duration(rand.Intn(5)))
+}
+
+func (c *Carrier) publishConfirmation(routingKey, message string) error {
+	ch, err := c.getChannel()
 	if err != nil {
-		log.Fatalf("%s: %s", "failed to open a channel", err)
+		return fmt.Errorf("failed to open a channel: %s", err)
 	}
 	defer ch.Close()
 
-	if err := ch.Publish(
-		"amq.direct",
+	return ch.Publish(
+		c.exchange,
 		routingKey,
 		false,
 		false,
@@ -108,7 +121,18 @@ func (c *Carrier) publishConfirmation(routingKey, message string) {
 			ContentType: "text/plain",
 			Body:        []byte(message),
 		},
-	); err != nil {
-		log.Fatalf("%s: %s", "Failed to publish a job", err)
+	)
+}
+
+func (c *Carrier) getChannel() (*amqp.Channel, error) {
+	if c.connection == nil {
+		return nil, fmt.Errorf("connection is nil")
 	}
+
+	ch, err := c.connection.Channel()
+	if err != nil {
+		return nil, fmt.Errorf("failed to open a channel: %s", err)
+	}
+
+	return ch, nil
 }
