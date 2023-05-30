@@ -17,3 +17,7 @@ This repository contains the solutions to the homework assignments for the cours
 - [**Lab4-5: Middleware**](./Lab4-5)
 
   The Lab4-5 directory contains the solution to the middleware homework assignment using the Apache Thrift, Ice and gRPC.
+
+- [**Lab6: Message Oriented Middleware**](./Lab6)
+
+  The Lab6-MOM-RabbitMQ directory contains the solution to the message-oriented middleware (MOM) homework assignment using RabbitMQ.
