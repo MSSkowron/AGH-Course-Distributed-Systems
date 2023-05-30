@@ -45,3 +45,6 @@
   go run . --carrier "carrier1" --jobs "person_transport,cargo_transport"
   go run . --carrier "carrier2" --jobs "cargo_transport,satellite_transport"
   ```
+
+  It works as shown below:
+  ![alt text](./example-schema.png)
