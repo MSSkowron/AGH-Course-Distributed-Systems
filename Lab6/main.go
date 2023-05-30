@@ -35,21 +35,18 @@ func main() {
 }
 
 func startAgency(address string, agencyName string, jobs []string, numberOfJobs int) {
-	// Połączenie z serwerem RabbitMQ
 	conn, err := amqp.Dial(address)
 	if err != nil {
 		log.Fatalf("%s: %s", "failed to connect to RabbitMQ", err)
 	}
 	defer conn.Close()
 
-	// Utworzenie kanału
 	ch, err := conn.Channel()
 	if err != nil {
 		log.Fatalf("%s: %s", "failed to open a channel", err)
 	}
 	defer ch.Close()
 
-	// Deklaracja wymiany typu direct dla zleceń i potwierdzeń
 	if err := ch.ExchangeDeclare(
 		"amq.direct",
 		amqp.ExchangeDirect,
@@ -108,28 +105,26 @@ func startAgency(address string, agencyName string, jobs []string, numberOfJobs 
 		}
 	}
 
-	NewAgency(agencyName, jobs, agencyQueue.Name, conn).Run(numberOfJobs)
+	agency := NewAgency(agencyName, jobs, agencyQueue.Name, conn)
+	agency.Run(numberOfJobs)
+	defer agency.Close()
 
-	// Blokada głównego wątku
 	<-make(chan struct{})
 }
 
 func startCarrier(address string, carrierName string, jobs []string) {
-	// Połączenie z serwerem RabbitMQ
 	conn, err := amqp.Dial(address)
 	if err != nil {
 		log.Fatalf("%s: %s", "failed to connect to RabbitMQ", err)
 	}
 	defer conn.Close()
 
-	// Utworzenie kanału
 	ch, err := conn.Channel()
 	if err != nil {
 		log.Fatalf("%s: %s", "failed to open a channel", err)
 	}
 	defer ch.Close()
 
-	// Deklaracja wymiany typu direct dla zleceń i potwierdzeń
 	if err := ch.ExchangeDeclare(
 		"amq.direct",
 		amqp.ExchangeDirect,
@@ -169,8 +164,9 @@ func startCarrier(address string, carrierName string, jobs []string) {
 		}
 	}
 
-	NewCarrier(carrierName, jobs, ch, jobQueues, conn).Run()
+	carrier := NewCarrier(carrierName, jobs, ch, jobQueues, conn)
+	carrier.Run()
+	defer carrier.Close()
 
-	// Blokada głównego wątku
 	<-make(chan struct{})
 }

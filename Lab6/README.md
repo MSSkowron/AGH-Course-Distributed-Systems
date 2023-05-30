@@ -1,5 +1,7 @@
 # RabbitMQ - Agencies & Carriers
 
+This repository provides an implementation of RabbitMQ for managing agencies and carriers. Follow the instructions below to run RabbitMQ and execute the various components.
+
 - **Running RabbitMQ**
 
   To run RabbitMQ, execute the following command:
@@ -18,9 +20,9 @@
 
   Replace:
 
-  - "agency-name" with the desired name for the agency
-  - "job-name1,job-name2,job-name3" with a comma-separated list of job names
-  - "number-of-jobs" with the desired number of jobs
+  - "agency-name" with the desired name for the agency.
+  - "job-name1,job-name2,job-name3" with a comma-separated list of job names.
+  - "number-of-jobs" with the desired number of jobs.
 
 - **Run a carrier**
 
@@ -32,12 +34,12 @@
 
   Replace:
 
-  - "carrier-name" with the desired name for the carrier
-  - "job_name1,job_name2,job_name3" with a comma-separated list of job names
+  - "carrier-name" with the desired name for the carrier.
+  - "job_name1,job_name2,job_name3" with a comma-separated list of job names.
 
 - **Example**
 
-  Run every command in a different command line:
+  Run each command in a different command line:
 
   ```
   go run . --agency "agency1" --jobs "person_transport,cargo_transport,satellite_transport" --numberOfJobs 10
@@ -46,5 +48,5 @@
   go run . --carrier "carrier2" --jobs "cargo_transport,satellite_transport"
   ```
 
-  It works as shown below:
+  The workflow is depicted in the image below:
   ![alt text](./rabbitMQFlow.png)

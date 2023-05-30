@@ -35,6 +35,10 @@ func (c *Carrier) Run() {
 	}
 }
 
+func (c *Carrier) Close() {
+	c.connection.Close()
+}
+
 func (c *Carrier) listenForJobs(queueName string) {
 	ch, err := c.connection.Channel()
 	if err != nil {
