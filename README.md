@@ -21,3 +21,7 @@ This repository contains the solutions to the homework assignments for the cours
 - [**Lab6: Message Oriented Middleware**](./Lab6)
 
   The Lab6-MOM-RabbitMQ directory contains the solution to the message-oriented middleware (MOM) homework assignment using RabbitMQ.
+
+- [**Lab7: Zookeeper**](./Lab7)
+
+  The Lab7 directory contains the solution to the ZooKeeper homework assignment. The assignment required students to create a Java application using the ZooKeeper environment.
